@@ -5,6 +5,7 @@ if [[ -z $1 || $1 == "-h" || $1 == "--help" ]]; then
         echo "-h - ask for help"
         echo "Examples use:"
         echo "openport [port/tcp or port/udp] - open port"
+	echo "openport get ports all - get all ports"
         echo "openport [port1/tcp or port/udp] [port2/tcp or port2/udp] - forward traffic from port 1 to port 2 "
 fi
 
@@ -14,20 +15,23 @@ if [[ $3 == "ports" ]]; then
 fi
 
 if [[ $3 == "all" ]]; then
-	echo "All of public zone: "
-	sudo firewall-cmd --zone=public --list-all
+	echo "All of "$2" zone: "
+	sudo firewall-cmd --zone=$2 --list-all
 fi
 
 if [[ $3 == "remove" ]]; then
 	echo "Removing port "$4
 	sudo firewall-cmd --zone=public --remove-port=$3 --permanent
+	sudo firewall-cmd --reload
 fi
 
 if [[ -z $3 && -z $2 && -n $1 ]]; then
 	echo "Opening port "$1
 	sudo firewall-cmd --zone=public --add-port=$1 --permanent
+	sudo firewall-cmd --reload
 fi
 
 if [[ -z $3 && -n $2 && -n $1 && (( $1 > 0 )) ]]; then
 	echo "Redirecting Trafic from port" $1 "to port" $2
+	sudo firewall-cmd --reload
 fi
