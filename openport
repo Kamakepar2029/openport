@@ -6,6 +6,7 @@ if [[ -z $1 || $1 == "-h" || $1 == "--help" ]]; then
         echo "Examples use:"
         echo "openport [port/tcp or port/udp] - open port"
 	echo "openport get ports all - get all ports"
+	echo "openport zone public all - get everything about the public zone"
         echo "openport [port1/tcp or port/udp] [port2/tcp or port2/udp] - forward traffic from port 1 to port 2 "
 fi
 
@@ -33,5 +34,6 @@ fi
 
 if [[ -z $3 && -n $2 && -n $1 && (( $1 > 0 )) ]]; then
 	echo "Redirecting Trafic from port" $1 "to port" $2
+	sudo firewall-cmd --zone=public --add-forward-port=port=$1:proto=tcp:toport=$2
 	sudo firewall-cmd --reload
 fi
